@@ -7,14 +7,19 @@
 //
 
 #import "RPNMasterViewController.h"
-
 #import "RPNDetailViewController.h"
 
 @interface RPNMasterViewController ()
+
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+
 @end
 
 @implementation RPNMasterViewController
+{
+    UIBarButtonItem *addButton;
+    UIBarButtonItem *deleteButton;
+}
 
 - (void)awakeFromNib
 {
@@ -29,7 +34,10 @@
 	// Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
+    addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
+
+    deleteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteSelectedObjects:)];
+    
     self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (RPNDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
 }
@@ -57,6 +65,39 @@
          // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
+    }
+}
+
+- (void)deleteSelectedObjects:(id)sender
+{
+    NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+
+    for (NSIndexPath *indexPath in [self.tableView indexPathsForSelectedRows]) {
+        [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
+    }
+
+    NSError *error = nil;
+    if (![context save:&error]) {
+        // Replace this implementation with code to handle the error appropriately.
+        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    // Set allowsMultipleSelectionDuringEditing to YES only while
+    // editing. This gives us the golden combination of swipe-to-delete
+    // while out of edit mode and multiple selections while in it.
+    self.tableView.allowsMultipleSelectionDuringEditing = editing;
+
+    [super setEditing:editing animated:animated];
+
+    if (editing) {
+        self.navigationItem.rightBarButtonItem = deleteButton;
+    } else {
+        self.navigationItem.rightBarButtonItem = addButton;
     }
 }
 

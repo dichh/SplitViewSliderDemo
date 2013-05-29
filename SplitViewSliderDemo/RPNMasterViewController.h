@@ -6,11 +6,7 @@
 //  Copyright (c) 2013 Rob Nadin. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 @class RPNDetailViewController;
-
-#import <CoreData/CoreData.h>
 
 @interface RPNMasterViewController : UITableViewController <NSFetchedResultsControllerDelegate>
 

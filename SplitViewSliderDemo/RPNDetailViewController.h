@@ -6,11 +6,14 @@
 //  Copyright (c) 2013 Rob Nadin. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
-@interface RPNDetailViewController : UIViewController <UISplitViewControllerDelegate>
+@interface RPNDetailViewController : UIViewController <UISplitViewControllerDelegate, UIPopoverControllerDelegate> {
+	IBOutlet UISplitViewController *splitController;
+	IBOutlet UIBarButtonItem *toggleItem;
+}
 
 @property (strong, nonatomic) id detailItem;
-
 @property (weak, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
+
+- (IBAction)toggleMasterView:(id)sender;
+
 @end
